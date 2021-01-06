@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>aspnet-Spice-81BF7112-95E5-4CF0-AEC3-454BFC27A122</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\Nowy folder1\**" />
+    <Content Remove="wwwroot\Nowy folder1\**" />
+    <EmbeddedResource Remove="wwwroot\Nowy folder1\**" />
+    <None Remove="wwwroot\Nowy folder1\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20210103180543_AddMenuItemToDataBase.cs" />
+    <Compile Remove="Data\Migrations\20210103180543_AddMenuItemToDataBase.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210103181003_AddMenuItem.cs" />
+    <Compile Remove="Data\Migrations\20210103181003_AddMenuItem.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210103181129_AddMenuItemt.cs" />
+    <Compile Remove="Data\Migrations\20210103181129_AddMenuItemt.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210103181312_AddMenuItemToDB.cs" />
+    <Compile Remove="Data\Migrations\20210103181312_AddMenuItemToDB.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.10" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.2.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
+
+</Project>

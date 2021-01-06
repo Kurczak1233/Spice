@@ -1,0 +1,77 @@
+﻿@model Spice.Models.Coupon
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<br />
+<h2 class="text-info">Details Category</h2>
+<br />
+
+<form method="post" enctype="multipart/form-data">
+    <div class="border background-search-white">
+
+        <div class="col-12">
+            @{
+                var base64 = Convert.ToBase64String(Model.Picture);
+                var imgsrc = string.Format("data:image/jpg;base64,{0}", base64); //Konwersja z tablicy Byte[] na zdjęcie
+            }
+            <img src="@imgsrc" style="height:100%; width:100%;" />
+        </div>
+        <br />
+        <div class="form-group row pl-4">
+            <div class="col-2">
+                <label asp-for="Name" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <input asp-for="Name" disabled class="form-control" />
+            </div>
+        </div>
+        <div class="form-group row pl-4">
+            <div class="col-2">
+                <label asp-for="Picture" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <input type="file" id="projectImage" disabled name="files" multiple class="form-control-file" />
+            </div>
+        </div>
+        <div class="form-group row pl-4">
+            <div class="col-2">
+                <label asp-for="CouponType" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <select asp-for="CouponType" disabled asp-items="@Html.GetEnumSelectList<Coupon.ECouponType>()" class="form-control"></select>
+            </div>
+        </div>
+        <div class="form-group row pl-4">
+            <div class="col-2">
+                <label asp-for="Discount" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <input asp-for="Discount" disabled class="form-control" />
+            </div>
+        </div>
+        <div class="form-group row pl-4">
+            <div class="col-2">
+                <label asp-for="MinimumAmount" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <input asp-for="MinimumAmount" disabled class="form-control" />
+            </div>
+        </div>
+        <div class="form-group row pl-4">
+            <div class="col-2">
+                <label asp-for="IsActive" class="col-form-label"></label>
+            </div>
+            <div class="col-5">
+                <input type="checkbox" asp-for="IsActive" disabled class="form-control" />
+            </div>
+        </div>
+
+        <div class="form-group col">
+            <div class="offset-2 col-5">
+                <partial name="_RedirectToEditAndBackToList" model="@Model.Id" />
+            </div>
+        </div>
+    </div>
+</form>
