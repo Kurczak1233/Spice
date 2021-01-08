@@ -20,7 +20,7 @@ namespace Spice.Areas.Admin.Controllers
         {
             _db = db;
         } /*DEPENDECY INJECTION (Bo zadeklarowaliśmy na począktu w starcie i teraz to wstrzykujemy*/
-        //GET
+        //GET - INDEX
         public async Task<IActionResult> Index()
         {
             return View(await _db.Category.ToListAsync());

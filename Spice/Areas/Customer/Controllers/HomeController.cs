@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Spice.Data;
@@ -37,6 +38,28 @@ namespace Spice.Controllers
             return View(IndexVM);
         }
 
+        public  IActionResult AddDishPropsition()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(ComputeViewModel data) //Dane z widoku, mogły być inaczej zapisane, jednak dla przykładu zostały wprowadzone inną klasą.
+        { 
+            int value = Int32.Parse(data.Value);
+            if (ModelState.IsValid)
+            {
+                var dishbuilder = new DishBuilder();
+                var dishbuilderdirector = new DishBuilderDirector(dishbuilder);
+                dishbuilderdirector.BuildDish(data.Name,data.Desc,value);
+                Dish dish = dishbuilderdirector.GetDishFromBuilder();
+                _db.Dish.Add(dish);
+                await _db.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();
