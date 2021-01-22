@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -60,6 +61,22 @@ namespace Spice.Controllers
             }
             return View();
         }
+
+        [Authorize]
+        public async Task<IActionResult> Details(int id)
+        {
+            //Bazując na id musimy otrzymać menuItem z naszej bazy danych
+            //Załaczamy do niej także categorię i podkategorię
+            var menuItemFromDb = await _db.MenuItem.Include(m => m.Category).Include(m => m.SubCategory).Where(m => m.Id == id).FirstOrDefaultAsync();
+            ShoppingCart cartObj = new ShoppingCart() //Tworzymy obiekt Cart
+            {
+                MenuItem = menuItemFromDb, //Przypisujemy mu z bazy danych dane naszego MenuItem
+                MenuItemId = menuItemFromDb.Id //Przypisujemy cartowi ID z naszego obiektu menuItem
+            };
+            return View(cartObj);
+
+        }
+
         public IActionResult Privacy()
         {
             return View();
