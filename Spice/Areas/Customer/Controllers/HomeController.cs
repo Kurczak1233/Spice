@@ -38,7 +38,7 @@ namespace Spice.Controllers
             return View(IndexVM);
         }
 
-        public  IActionResult AddDishPropsition()
+        public IActionResult AddDishPropsition()
         {
             return View();
         }
