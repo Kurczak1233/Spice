@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Spice.Data;
 using Spice.Models;
 using Spice.Models.ViewModels;
+using Spice.Utility;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -44,7 +45,7 @@ namespace Spice.Controllers
             if(claim!=null)
             {
                 var cnt = _db.ShoppingCart.Where(u => u.ApplicationUserId == claim.Value).ToList().Count;
-                HttpContext.Session.SetInt32("ssCartCount", cnt);
+                HttpContext.Session.SetInt32(SD.ssShoppingCartCount, cnt);
             }
 
             return View(IndexVM);
@@ -112,7 +113,7 @@ namespace Spice.Controllers
                 await _db.SaveChangesAsync();
 
                 var count = _db.ShoppingCart.Where(c => c.ApplicationUserId == CartObject.ApplicationUserId).ToList().Count();
-                HttpContext.Session.SetInt32("ssCartCount", count); //Session!
+                HttpContext.Session.SetInt32(SD.ssShoppingCartCount, count); //Session!
 
                 return RedirectToAction("Index");
             }
