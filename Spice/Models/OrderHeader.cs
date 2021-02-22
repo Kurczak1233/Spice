@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Spice.Models
 {
-    public class OrderHeader : Controller
+    public class OrderHeader
     {
             [Key]
             public int Id { get; set; }
