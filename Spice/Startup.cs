@@ -40,7 +40,7 @@ namespace Spice
             services.AddSingleton<IEmailSender, EmailSender>(); //BugFix z Emailem przy rejestracji
 
             services.AddControllersWithViews();
-            services.AddRazorPages();
+            services.AddRazorPages().AddRazorRuntimeCompilation();
 
             services.AddDbContext<SpiceContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("SpiceContext")));
