@@ -12,13 +12,15 @@ using System.Threading.Tasks;
 
 namespace Spice.Areas.Customer.Controllers
 {
-    public class CartControler : Controller
+
+    [Area("Customer")]
+    public class CartController : Controller
     {
         // GET: CartControler
         private readonly ApplicationDbContext _db;
         [BindProperty]
         public OrderDetailsCart detailCart { get; set; }
-        public CartControler(ApplicationDbContext db)
+        public CartController(ApplicationDbContext db)
         {
             _db = db; //Dependecy injection
         }
