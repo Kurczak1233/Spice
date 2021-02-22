@@ -56,6 +56,13 @@ namespace Spice
                 options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 
             });
+
+            services.AddSession(options => //Adding seasions with cookies and idle time of 30 min.
+            {
+                options.Cookie.IsEssential = true;
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
