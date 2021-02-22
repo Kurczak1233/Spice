@@ -25,8 +25,10 @@
                     <label asp-for="MenuItem.Description" class="col-form-label"></label>
                 </div>
                 <div class="col-8">
-                    @*@Html.TextAreaFor(m=>m.MenuItem.Description)*@ @*Zrobienie tego samego tylko przy pomocy tag helpera!*@
-                    <textarea asp-for="MenuItem.Description" readonly class="form-control" placeholder="I am a single product's description!"></textarea>
+                    <div class="pd-2 border">
+                        @Html.Raw(Model.MenuItem.Description) @*Zrobienie tego samego tylko przy pomocy tag helpera!*@
+                        @*<input asp-for="MenuItem.Description" readonly class="form-control" />*@
+                    </div>
                 </div>
             </div>
             <div class="form-group row pl-4">
@@ -59,7 +61,7 @@
                 </div>
                 <div class="col-8">
 
-                    <select asp-for="MenuItem.Spicyness" readonly asp-items="Html.GetEnumSelectList<MenuItem.ESpicy>()" class="form-control"></select>
+                    <select asp-for="MenuItem.Spicyness" disabled asp-items="Html.GetEnumSelectList<MenuItem.ESpicy>()" class="form-control"></select>
                 </div>
             </div>
             <div class="form-group row pl-4">

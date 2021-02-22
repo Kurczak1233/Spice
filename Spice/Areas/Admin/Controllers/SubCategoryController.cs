@@ -122,7 +122,7 @@ namespace Spice.Areas.Admin.Controllers
         }
 
         //POST EDIT
-        [HttpPost]
+        [HttpPost] //REST.API
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, SubCategoryAndCategoryViewModel model)
         {
