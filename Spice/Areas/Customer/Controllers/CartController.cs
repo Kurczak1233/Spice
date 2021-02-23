@@ -162,5 +162,68 @@ namespace Spice.Areas.Customer.Controllers
             return View(detailCart);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("Summary")]
+        public async Task<IActionResult> SummaryPost()
+        {
+
+            var claimsIdenity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdenity.FindFirst(ClaimTypes.NameIdentifier);
+            detailCart.listCart = await _db.ShoppingCart.Where(c => c.ApplicationUserId == claim.Value).ToListAsync();
+
+            detailCart.OrderHeader.PaymentStatus = SD.PaymentStatusPending; // Order total = 0 
+            detailCart.OrderHeader.OrderDate = DateTime.Now; // Order total = 0 
+            detailCart.OrderHeader.UserId = claim.Value; // Order total = 0 
+            detailCart.OrderHeader.Status = SD.PaymentStatusPending; // Order total = 0 
+            detailCart.OrderHeader.PickUpTime = Convert.ToDateTime(detailCart.OrderHeader.PickUpDate.ToShortDateString() + " " + detailCart.OrderHeader.PickUpTime.ToShortTimeString()); // Order total = 0 
+
+            List<OrderDetails> orderDetailsList = new List<OrderDetails>();
+            _db.OrderHeader.Add(detailCart.OrderHeader);
+            await _db.SaveChangesAsync();
+
+            detailCart.OrderHeader.OrderTotalOriginal = 0;
+            
+            foreach (var item in detailCart.listCart) //Liczenie ceny dla każdego z produktów
+            {
+                item.MenuItem = await _db.MenuItem.FirstOrDefaultAsync(m => m.Id == item.MenuItemId);
+                OrderDetails orderDetails = new OrderDetails
+                {
+                    MenuItemId = item.MenuItem.Id,
+                    OrderId = detailCart.OrderHeader.Id,
+                    Description = item.MenuItem.Description,
+                    Name = item.MenuItem.Name,
+                    Price = item.MenuItem.Price,
+                    Count = item.Count
+                };
+                detailCart.OrderHeader.OrderTotalOriginal += orderDetails.Count * orderDetails.Price;
+                _db.OrderDetails.Add(orderDetails); //Dodanie dopiero po SaveChanges!!!!
+                
+
+            }
+
+            if (HttpContext.Session.GetString(SD.ssCouponCode) != null) //If coupon has been used
+            {
+                detailCart.OrderHeader.CouponCode = HttpContext.Session.GetString(SD.ssCouponCode);
+                var couponFromDb = await _db.Coupon.Where(c => c.Name.ToLower() == detailCart.OrderHeader.CouponCode.ToLower()).FirstOrDefaultAsync();
+                detailCart.OrderHeader.OrderTotal = SD.DiscountedPrice(couponFromDb, detailCart.OrderHeader.OrderTotalOriginal);
+            }
+            else
+            {
+                detailCart.OrderHeader.OrderTotal = detailCart.OrderHeader.OrderTotalOriginal; //No coupon used.
+            }
+
+            detailCart.OrderHeader.CouponCodeDiscount = detailCart.OrderHeader.OrderTotalOriginal - detailCart.OrderHeader.OrderTotal;
+            //Remove session attributes
+            //Remove items from shopping cart
+            _db.ShoppingCart.RemoveRange(detailCart.listCart);
+            HttpContext.Session.SetInt32(SD.ssShoppingCartCount, 0);
+
+            await _db.SaveChangesAsync();
+
+
+            return RedirectToAction("Confirm", "Order", new { id = detailCart.OrderHeader.Id });
+        }
+
     }
 }
