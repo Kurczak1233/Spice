@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Spice.Data;
+using Spice.Models;
 using Spice.Models.ViewModels;
 using Spice.Utility;
 using System;
@@ -120,5 +121,46 @@ namespace Spice.Areas.Customer.Controllers
             HttpContext.Session.SetInt32(SD.ssShoppingCartCount, cnt);
             return RedirectToAction(nameof(Index));
         }
+
+
+        public async Task<IActionResult> Summary()
+        {
+            detailCart = new OrderDetailsCart() //Create detailCart
+            {
+                OrderHeader = new Models.OrderHeader() //We will populate this prop (list later)
+            };
+
+            detailCart.OrderHeader.OrderTotal = 0; // Order total = 0
+
+            var claimsIdenity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdenity.FindFirst(ClaimTypes.NameIdentifier); //Get Identity of user
+            ApplicationUser applicationUser = await _db.ApplicationUser.Where(c => c.Id == claim.Value).FirstOrDefaultAsync();
+
+            var cart = _db.ShoppingCart.Where(c => c.ApplicationUserId == claim.Value); //Find user Cart
+            if (cart != null) //Przypisanie do listy w viewmodel naszej listy menuitmeów z osoby zidentifikowanej.
+            {
+                detailCart.listCart = cart.ToList();
+            }
+            foreach (var list in detailCart.listCart) //Liczenie ceny dla każdego z produktów
+            {
+                list.MenuItem = await _db.MenuItem.FirstOrDefaultAsync(m => m.Id == list.MenuItemId);
+                detailCart.OrderHeader.OrderTotal = detailCart.OrderHeader.OrderTotal + (list.MenuItem.Price * list.Count);
+            }
+
+            detailCart.OrderHeader.OrderTotalOriginal = detailCart.OrderHeader.OrderTotal; // BO nie ma kodu -15% (obie wartości te same)
+            detailCart.OrderHeader.PickUpName = applicationUser.Name;
+            detailCart.OrderHeader.PhoneNumber = applicationUser.PhoneNumber;
+            detailCart.OrderHeader.PickUpTime = DateTime.Now;
+            if (HttpContext.Session.GetString(SD.ssCouponCode) != null)
+            {
+                detailCart.OrderHeader.CouponCode = HttpContext.Session.GetString(SD.ssCouponCode);
+                var couponFromDb = await _db.Coupon.Where(c => c.Name.ToLower() == detailCart.OrderHeader.CouponCode.ToLower()).FirstOrDefaultAsync();
+                detailCart.OrderHeader.OrderTotal = SD.DiscountedPrice(couponFromDb, detailCart.OrderHeader.OrderTotalOriginal);
+            }
+
+
+            return View(detailCart);
+        }
+
     }
 }
