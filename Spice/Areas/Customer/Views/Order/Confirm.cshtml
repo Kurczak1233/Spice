@@ -1,0 +1,23 @@
+﻿@model Spice.Models.ViewModels.OrderDetailsViewmodel
+
+<div class="background-search-white">
+    <div class="row px-3">
+        <div class="col-8"><h2 class="text-info">Order confirmed</h2></div>
+        <div class="col-4 text-right">
+            <a asp-action="Index" asp-controller="Home" class="btn btn-success form-control">New Order</a>
+        </div>
+    </div>
+
+    @if(Model.OrderHeader != null )
+    {
+        <div style="color:maroon" class="px-3">
+            Your order has been confirmed! Please see the order summary below. 
+            <br />
+            Feel free to contact us if you have any questions.
+        </div>
+    }
+    else
+    {
+        <div class="text-danger px-3">Error! Please try again</div>
+    }
+</div>
