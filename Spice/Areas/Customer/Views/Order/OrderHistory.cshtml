@@ -89,3 +89,33 @@
         </div>
     </div>
 </div>
+
+@section scripts{
+    <script>
+        var PostBackURL = '/Customer/Order/GetOrderDetails';
+
+        $(function () {
+            $(".anchorDetail").click(function () {
+                var $buttonClicked = $(this); //Ten element
+                var id = $buttonClicked.attr('data-id'); //Pobieramy Id order headerea
+
+                $.ajax({
+                    type: "GET",
+                    url: PostBackURL,
+                    contentType: "application/json; charset=utf-8",
+                    data: { "Id": id },
+                    cache: false,
+                    datatype: "json",
+                    success: function (data) {
+                        $('#myModalContent').html(data);
+                        $('#myModal').modal('show');
+                    },
+                    error: function () {
+                        alert("Dynamic action failed")
+                    }
+                })
+            })
+        })
+    </script>
+
+}
