@@ -33,6 +33,28 @@ namespace Spice.Areas.Customer.Controllers
                 OrderDetails = await _db.OrderDetails.Where(o => o.OrderId == id).ToListAsync()
             };
             return View(orderDetailsViewmodel);
-        }   
+        }
+
+        [Authorize]
+        public async Task<IActionResult> OrderHistory()
+        {
+            var claimsIdenity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdenity.FindFirst(ClaimTypes.NameIdentifier); //Sprawdzamy Id użytkownika.
+
+            List<OrderDetailsViewmodel> orderList = new List<OrderDetailsViewmodel>();
+
+            List<OrderHeader> OrderHeaderlist = await _db.OrderHeader.Include(o => o.ApplicationUser).Where(u => u.UserId == claim.Value).ToListAsync();
+
+            foreach (OrderHeader item in OrderHeaderlist)
+            {
+                OrderDetailsViewmodel individial = new OrderDetailsViewmodel()
+                {
+                    OrderHeader = item,
+                    OrderDetails = await _db.OrderDetails.Where(o => o.OrderId == item.Id).ToListAsync()
+                };
+                orderList.Add(individial);
+            }
+            return View(orderList);
+        }
     }
 }
