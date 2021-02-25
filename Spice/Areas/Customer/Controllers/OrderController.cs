@@ -13,9 +13,11 @@ using System.Threading.Tasks;
 namespace Spice.Areas.Customer.Controllers
 {
     [Area("Customer")]
+   
     public class OrderController : Controller
     {
         private ApplicationDbContext _db;
+        private int PageSize = 2;
         public OrderController(ApplicationDbContext db)
         {
             _db = db;
@@ -36,10 +38,17 @@ namespace Spice.Areas.Customer.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> OrderHistory()
+        public async Task<IActionResult> OrderHistory(int productPage = 1)
         {
             var claimsIdenity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdenity.FindFirst(ClaimTypes.NameIdentifier); //Sprawdzamy Id użytkownika.
+
+
+            OrderListViewModel orderListViewModel = new OrderListViewModel()
+            {
+                Orders = new List<OrderDetailsViewmodel>(),
+            };
+
 
             List<OrderDetailsViewmodel> orderList = new List<OrderDetailsViewmodel>();
 
@@ -52,9 +61,21 @@ namespace Spice.Areas.Customer.Controllers
                     OrderHeader = item,
                     OrderDetails = await _db.OrderDetails.Where(o => o.OrderId == item.Id).ToListAsync()
                 };
-                orderList.Add(individial);
+                orderListViewModel.Orders.Add(individial);
             }
-            return View(orderList);
+
+            var count = orderListViewModel.Orders.Count;
+            orderListViewModel.Orders = orderListViewModel.Orders.OrderByDescending(p => p.OrderHeader.Id).Skip((productPage - 1) * PageSize).Take(PageSize).ToList();
+
+            orderListViewModel.PagingInfo = new PagingInfo()
+            {
+                CurrentPage = productPage,
+                ItemsForPage = PageSize,
+                TotalItem = count,
+                urlParam = "/Customer/Order/OrderHistory?productPage=:"
+            }
+
+            return View(orderListViewModel);
         }
 
         public async Task<IActionResult> GetOrderDetails(int Id)
