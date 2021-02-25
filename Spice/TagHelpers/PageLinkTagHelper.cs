@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Spice.TagHelpers
 {
-    [HtmlTargetElement('div', Attributes ="page-model")]
+    [HtmlTargetElement("div", Attributes ="page-model")]
     public class PageLinkTagHelper : TagHelper
     {
         private IUrlHelperFactory urlHelperFactory;

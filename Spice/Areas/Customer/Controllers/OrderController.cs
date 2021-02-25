@@ -73,7 +73,7 @@ namespace Spice.Areas.Customer.Controllers
                 ItemsForPage = PageSize,
                 TotalItem = count,
                 urlParam = "/Customer/Order/OrderHistory?productPage=:"
-            }
+            };
 
             return View(orderListViewModel);
         }
